@@ -170,12 +170,13 @@ define([
         /**
          * @param {Object} params
          * @param {Object} params.fields
-         * @param {String} params.active - Is widget active now ('Y' || 'N')
+         * @param {String} params.active - Is widget will be active ('Y' || 'N')
+         * Use it only when widget is already installed
          */
         onSave: _.bind(function (params) {
           var result = false;
           if (this._settings !== null) {
-            result = this._settings.canSave(params.fields);
+            result = this._settings.canSave(params.active === 'Y', params.fields);
           }
 
           return result;

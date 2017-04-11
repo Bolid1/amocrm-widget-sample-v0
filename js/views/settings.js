@@ -63,6 +63,7 @@ define(['underscore', 'backbone'],
         },
 
         /**
+         * @param {Boolean} is_active
          * @param {Object} fields
          * @param {String} fields.field_text
          * @param {String} fields.field_pass
@@ -70,19 +71,33 @@ define(['underscore', 'backbone'],
          *
          * @return {boolean}
          */
-        canSave: function (fields) {
-          var data = {
+        canSave: function (is_active, fields) {
+          var data, hash, params, first_install;
+
+          // Compose data to check & save
+          data = {
             login: fields.field_text,
             password: fields.field_pass
           };
 
-          var hash = this._buildHash(data.login, data.password);
+          hash = this._buildHash(data.login, data.password);
 
-          var params = {
+          // Compose ajax params
+          params = {
             data: data,
             success: _.bind(this._onCheckPassword, this),
             error: _.bind(this.stopSave, this)
           };
+
+          // Is widget already was installed in this account
+          first_install = this._$modal_body.find('input[name="widget_active"]').length === 0;
+
+          // If widget was already installed, and user turn it of,
+          // then we don't check any data,
+          // just let him do what he want
+          if (!first_install && !is_active) {
+            return true;
+          }
 
           if (!_.has(fields, 'field_custom')) {
             fields.field_custom = {};
