@@ -1,0 +1,43 @@
+{
+  "widget": {
+    "name": "widget.name",
+    "description": "widget.description",
+    "short_description": "widget.short_description",
+    "code": "amo_sample_v0",
+    "secret_key": "c4fba68b3cc2da17d507c8830bdabb2c2d420575d554065960754efad89000a7",
+    "version": "0.0.1",
+    "locale": [
+      "ru"
+    ],
+    "installation": true,
+    "interface_version": 2
+  },
+  "locations": [
+    "everywhere",
+    "lcard-1",
+    "comcard-1",
+    "ccard-0",
+    "cucard-0",
+    "llist-0",
+    "clist-1",
+    "culist-0",
+    "tlist-1"
+  ],
+  "settings": {
+    "field_text": {
+      "name": "settings.field_text",
+      "type": "text",
+      "required": true
+    },
+    "field_pass": {
+      "name": "settings.field_pass",
+      "type": "pass",
+      "required": true
+    },
+    "field_custom": {
+      "name": "settings.field_custom",
+      "type": "custom",
+      "required": false
+    }
+  }
+}
