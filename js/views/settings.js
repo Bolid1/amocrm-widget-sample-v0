@@ -5,15 +5,11 @@ define(['underscore', 'backbone'],
    * @return {SampleWidgetSettings}
    */
   function (_, Backbone) {
-    /**
-     * @class SampleWidgetSettings
-     * @description Работа в окне настроек
-     * @constructor
-     */
     return Backbone.View.extend(
       /**
-       * @lends {SampleWidgetSettings}
-       * @this {SampleWidgetSettings}
+       * @class SampleWidgetSettings
+       * @extends {Backbone.View}
+       * @description Работа в окне настроек
        */
       {
         /**
