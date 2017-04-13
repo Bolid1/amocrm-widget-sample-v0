@@ -4,7 +4,8 @@ define([
     './js/views/settings.js',
     './js/helpers/render.js',
     './js/helpers/requester.js',
-    './js/helpers/i18n.js'
+    './js/helpers/i18n.js',
+    './js/views/card_visible.js'
   ],
   /**
    * @param {Object} manifest
@@ -19,13 +20,20 @@ define([
    * @param {Boolean} manifest.widget.installation
    * @param {Number} manifest.widget.interface_version
    * @param {_} _
-   * @param {SampleWidgetSettings} SampleWidgetSettings
+   * @param {SampleWidgetSettings} Settings
    * @param {RenderClass} RenderClass
    * @param {RequesterClass} RequesterClass
    * @param {I18nClass} I18nClass
+   * @param {SampleWidgetCardVisible} CardVisible
    * @return {Function}
    */
-  function (manifest, _, SampleWidgetSettings, RenderClass, RequesterClass, I18nClass) {
+  function (manifest,
+            _,
+            Settings,
+            RenderClass,
+            RequesterClass,
+            I18nClass,
+            CardVisible) {
     /**
      * @typedef {Object} WidgetSystemObject
      * @property {String} area
@@ -131,6 +139,16 @@ define([
      * @return {Boolean|String}
      */
     /**
+     * @member {function} render_template
+     * @memberOf Widget
+     * @param {Object} params
+     * @param {Object} [params.caption]
+     * @param {String} params.body
+     * @param {String} params.render
+     * @param {Object} additional_params
+     * @return {Boolean|String}
+     */
+    /**
      * @member {function} widgetsOverlay - Show overlay
      * @memberOf Widget
      */
@@ -145,27 +163,54 @@ define([
      * @extends Widget
      */
     return function () {
+      /**
+       * @type {String}
+       */
       this.version = manifest.widget.version;
       //noinspection JSValidateTypes
+      /**
+       * @type {RenderClass}
+       * @private
+       */
       this._render = new RenderClass(this);
       //noinspection JSValidateTypes
+      /**
+       * @type {RequesterClass}
+       * @private
+       */
       this._requester = new RequesterClass(this);
       //noinspection JSValidateTypes
+      /**
+       * @type {I18nClass}
+       * @private
+       */
       this._i18n = new I18nClass(this);
 
       this._settings = null;
+      this._views = [];
 
       this.callbacks = {
-        // Work with settings
-        settings: _.bind(function ($modal_body) {
-          //noinspection JSValidateTypes
-          this._settings = new SampleWidgetSettings({
-            render_object: this._render,
-            requester: this._requester,
-            i18n: this._i18n,
-            $modal_body: $modal_body
-          });
-        }, this),
+        /**
+         * @description Work with settings. Let's create view for settings modal.
+         */
+        settings: _.bind(
+          /**
+           * @param {jQuery} $modal_body
+           * @this SampleWidgetController
+           */
+          function ($modal_body) {
+            //noinspection JSValidateTypes
+            this._settings = new Settings({
+              render_object: this._render,
+              requester: this._requester,
+              i18n: this._i18n,
+              el: $modal_body
+            });
+
+            this._views.push(this._settings);
+          },
+          this
+        ),
 
         /**
          * @param {Object} params
@@ -183,8 +228,45 @@ define([
         }, this),
 
 
+        render: _.bind(function () {
+          var template, params, area;
+          area = this.system().area;
+
+          if (!area) {
+            return false;
+          }
+
+          switch (area) {
+            case 'lcard':
+            case 'comcard':
+              template = '<div class="js-widget-{{ widget_code }}-body"></div>';
+              params = {widget_code: this.get_settings().widget_code};
+              this.render_template({render: template, body: ''}, params);
+              break;
+          }
+
+          return true;
+        }, this),
+
         init: _.bind(function () {
-          console.log('init', arguments);
+          var area = this.system().area;
+
+          if (!area) {
+            return false;
+          }
+
+          switch (area) {
+            case 'lcard':
+            case 'comcard':
+              //noinspection JSValidateTypes
+              this._views.push(new CardVisible({
+                el: $('.js-widget-' + this.get_settings().widget_code + '-body'),
+                element_type: area === 'lcard' ? 'leads' : 'companies',
+                render_object: this._render,
+                i18n: this._i18n
+              }));
+              break;
+          }
           return true;
         }, this),
 
@@ -194,26 +276,34 @@ define([
           return true;
         },
 
-
-        render: function () {
-          console.log('render', arguments);
-          return true;
-        },
-        dpSettings: function () {
+        dpSettings: _.bind(function () {
           console.log('dpSettings', arguments);
-        },
-        destroy: function () {
-          console.log('destroy', arguments);
-        },
+        }, this),
+
+        destroy: _.bind(function () {
+          var view;
+          while (this._views.length) {
+            view = this._views.splice();
+            if (view && _.isFunction(view.remove)) {
+              view.remove();
+            }
+
+            if (view instanceof Settings) {
+              this._settings = null;
+            }
+          }
+        }, this),
+
         contacts: {
-          selected: function () {
+          selected: _.bind(function () {
             console.log('selected', arguments);
-          }
+          }, this)
         },
+
         leads: {
-          selected: function () {
+          selected: _.bind(function () {
             console.log('selected', arguments);
-          }
+          }, this)
         }
       };
       return this;

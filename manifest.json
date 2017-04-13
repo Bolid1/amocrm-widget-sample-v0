@@ -5,7 +5,7 @@
     "short_description": "widget.short_description",
     "code": "amo_sample_v0",
     "secret_key": "c4fba68b3cc2da17d507c8830bdabb2c2d420575d554065960754efad89000a7",
-    "version": "0.0.1",
+    "version": "0.0.2",
     "locale": [
       "ru"
     ],

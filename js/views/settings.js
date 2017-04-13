@@ -1,41 +1,26 @@
-define(['underscore', 'backbone'],
+define(['underscore', './base_view.js'],
   /**
    * @param {_} _
-   * @param {Backbone} Backbone
+   * @param {SampleWidgetBaseView} BaseView
    * @return {SampleWidgetSettings}
    */
-  function (_, Backbone) {
-    return Backbone.View.extend(
+  function (_, BaseView) {
+    return BaseView.extend(
       /**
        * @class SampleWidgetSettings
-       * @extends {Backbone.View}
+       * @extends SampleWidgetBaseView
        * @description Работа в окне настроек
        */
       {
         /**
          * @member {jQuery}
          */
-        _$modal_body: null,
-
-        /**
-         * @member {jQuery}
-         */
         _$save_btn: null,
-
-        /**
-         * @member {RenderClass}
-         */
-        _render_object: null,
 
         /**
          * @member {RequesterClass}
          */
         _requester: null,
-
-        /**
-         * @member {I18nClass}
-         */
-        _i18n: null,
 
         /**
          * @member {Object}
@@ -44,18 +29,16 @@ define(['underscore', 'backbone'],
 
         /**
          * @param {Object} params
-         * @param {jQuery} params.$modal_body
+         * @param {jQuery} params.el
          * @param {RenderClass} params.render_object
          * @param {RequesterClass} params.requester
          * @param {I18nClass} params.i18n
          * @constructor
          */
         initialize: function (params) {
-          this._render_object = params.render_object;
+          BaseView.prototype.initialize.apply(this, arguments);
           this._requester = params.requester;
-          this._i18n = params.i18n;
-          this._$modal_body = params.$modal_body;
-          this._$save_btn = this._$modal_body.find('.js-widget-save');
+          this._$save_btn = this.$el.find('.js-widget-save');
         },
 
         /**
@@ -86,7 +69,7 @@ define(['underscore', 'backbone'],
           };
 
           // Is widget already was installed in this account
-          first_install = this._$modal_body.find('input[name="widget_active"]').length === 0;
+          first_install = this.$el.find('input[name="widget_active"]').length === 0;
 
           // If widget was already installed, and user turn it of,
           // then we don't check any data,
@@ -138,7 +121,7 @@ define(['underscore', 'backbone'],
           var tip = template.render(_.extend(params, {message: this._i18n.get('settings.tips.equals')}));
           var $tip = $(tip);
 
-          this._$modal_body.find('.widget_settings_block__descr').append($tip);
+          this.$el.find('.widget_settings_block__descr').append($tip);
           _.delay(function () {
             $tip.remove();
           }, 1000);
