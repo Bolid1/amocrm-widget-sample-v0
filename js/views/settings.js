@@ -10,12 +10,18 @@ define(['underscore', './base_view.js'],
        * @class SampleWidgetSettings
        * @extends SampleWidgetBaseView
        * @description Работа в окне настроек
+       * @this SampleWidgetSettings
        */
       {
         /**
          * @member {jQuery}
          */
         _$save_btn: null,
+
+        /**
+         * @member {jQuery}
+         */
+        _$confirm: null,
 
         /**
          * @member {RequesterClass}
@@ -39,6 +45,8 @@ define(['underscore', './base_view.js'],
           BaseView.prototype.initialize.apply(this, arguments);
           this._requester = params.requester;
           this._$save_btn = this.$el.find('.js-widget-save');
+          this.renderConfirm();
+          this.appendStyles();
         },
 
         /**
@@ -52,6 +60,11 @@ define(['underscore', './base_view.js'],
          */
         canSave: function (is_active, fields) {
           var data, hash, params, first_install;
+
+          if (!this._isConfirmed()) {
+            this.stopSave().showNeedConfirm();
+            return false;
+          }
 
           // Compose data to check & save
           data = {
@@ -113,6 +126,8 @@ define(['underscore', './base_view.js'],
 
         stopSave: function () {
           this._$save_btn.trigger('button:load:stop');
+
+          return this;
         },
 
         /**
@@ -130,10 +145,37 @@ define(['underscore', './base_view.js'],
         /**
          * @param {Twig.Template} template
          * @param {Object} params
+         * @param {String} params.widget_code
+         * @param {Number} params.current_date
+         * @param {String} params.widget_version
+         * @param {String} params.base_path
          * @private
          */
         _showTip: function (template, params) {
           var tip = template.render(_.extend(params, {message: this._i18n.get('settings.tips.equals')}));
+          var $tip = $(tip);
+
+          this.$el.find('.widget_settings_block__descr').append($tip);
+          _.delay(function () {
+            $tip.remove();
+          }, 1000);
+        },
+
+        showNeedConfirm: function () {
+          this._render_object.render('settings/tip', _.bind(this._showNeedConfirm, this));
+        },
+
+        /**
+         * @param {Twig.Template} template
+         * @param {Object} params
+         * @param {String} params.widget_code
+         * @param {Number} params.current_date
+         * @param {String} params.widget_version
+         * @param {String} params.base_path
+         * @private
+         */
+        _showNeedConfirm: function (template, params) {
+          var tip = template.render(_.extend(params, {message: this._i18n.get('settings.tips.need_confirm')}));
           var $tip = $(tip);
 
           this.$el.find('.widget_settings_block__descr').append($tip);
@@ -157,6 +199,45 @@ define(['underscore', './base_view.js'],
             this.showTip();
             this.stopSave();
           }
+        },
+
+        renderConfirm: function () {
+          this._render_object.renderCoreControl('checkbox', _.bind(this._renderConfirm, this));
+
+          return this;
+        },
+
+        /**
+         * @param {Twig.Template} template
+         * @param {Object} params
+         * @param {String} params.widget_code
+         * @param {Number} params.current_date
+         * @param {String} params.widget_version
+         * @param {String} params.base_path
+         * @private
+         */
+        _renderConfirm: function (template, params) {
+          var html = template.render({
+            class_name: 'js-agreement send_auth_agreement',
+            input_class_name: 'js-agreement-input',
+            checked: false,
+            text_class_name: 'agreement_text',
+            text: this._i18n.get('settings.agreement')
+          });
+
+          this.$el.find('.widget_settings_block__fields').append(html);
+          this._$confirm = this.$el.find('.js-agreement-input');
+        },
+
+        _isConfirmed: function () {
+          return this._$confirm && this._$confirm.get(0).checked === true;
+        },
+
+        appendStyles: function () {
+          $('<link/>', {
+            href: this._render_object.get('styles_path') + '/settings/base.css',
+            rel: 'stylesheet'
+          }).appendTo(this.$el);
         }
       }
     );

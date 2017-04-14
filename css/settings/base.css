@@ -1,0 +1,8 @@
+.send_auth_agreement {
+  display: flex;
+  padding-top: 20px;
+}
+
+.send_auth_agreement .agreement_text {
+  margin-top: -1px;
+}
