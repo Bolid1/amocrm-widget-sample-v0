@@ -69,7 +69,7 @@ define(['underscore', './base_view.js'],
           };
 
           // Is widget already was installed in this account
-          first_install = this.$el.find('input[name="widget_active"]').length === 0;
+          first_install = this._isFirstInstall();
 
           // If widget was already installed, and user turn it of,
           // then we don't check any data,
@@ -90,6 +90,10 @@ define(['underscore', './base_view.js'],
           fields.field_custom[hash] = this._last_hash[hash];
 
           return true;
+        },
+
+        _isFirstInstall: function () {
+          return this.$el.find('input[name="widget_active"]').length === 0;
         },
 
         _buildHash: function (login, password) {
