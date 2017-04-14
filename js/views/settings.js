@@ -92,10 +92,21 @@ define(['underscore', './base_view.js'],
           return true;
         },
 
+        /**
+         * @return {boolean}
+         * @private
+         * @description Check if widget was NOT installed in prev time
+         */
         _isFirstInstall: function () {
           return this.$el.find('input[name="widget_active"]').length === 0;
         },
 
+        /**
+         * @param {String} login
+         * @param {String} password
+         * @return {String}
+         * @private
+         */
         _buildHash: function (login, password) {
           return login + '_' + password;
         },
