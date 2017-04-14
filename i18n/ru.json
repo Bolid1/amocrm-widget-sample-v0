@@ -4,6 +4,14 @@
     "short_description": "Короткое описание виджета",
     "description": "Длинное описание виджета"
   },
+  "card": {
+    "leads": {
+      "example_input": {
+        "placeholder": "Пример input-а"
+      },
+      "submit": "Отправить"
+    }
+  },
   "settings": {
     "field_text": "Поле text",
     "field_pass": "Поле pass",

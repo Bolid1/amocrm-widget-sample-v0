@@ -5,7 +5,7 @@ define([
     './js/helpers/render.js',
     './js/helpers/requester.js',
     './js/helpers/i18n.js',
-    './js/views/card_visible.js'
+    './js/factories/card_views.js'
   ],
   /**
    * @param {Object} manifest
@@ -24,7 +24,7 @@ define([
    * @param {RenderClass} RenderClass
    * @param {RequesterClass} RequesterClass
    * @param {I18nClass} I18nClass
-   * @param {SampleWidgetCardVisible} CardVisible
+   * @param {FactoryForCardViews} CardViewsFactory
    * @return {Function}
    */
   function (manifest,
@@ -33,7 +33,7 @@ define([
             RenderClass,
             RequesterClass,
             I18nClass,
-            CardVisible) {
+            CardViewsFactory) {
     /**
      * @typedef {Object} WidgetSystemObject
      * @property {String} area
@@ -250,6 +250,8 @@ define([
 
         init: _.bind(function () {
           var area = this.system().area;
+          var element_type;
+          var view = null;
 
           if (!area) {
             return false;
@@ -258,15 +260,20 @@ define([
           switch (area) {
             case 'lcard':
             case 'comcard':
-              //noinspection JSValidateTypes
-              this._views.push(new CardVisible({
+              element_type = area === 'lcard' ? 'leads' : 'companies';
+              view = CardViewsFactory(element_type, {
                 el: $('.js-widget-' + this.get_settings().widget_code + '-body'),
-                element_type: area === 'lcard' ? 'leads' : 'companies',
+                element_type: element_type,
                 render_object: this._render,
                 i18n: this._i18n
-              }));
+              });
               break;
           }
+
+          if (view !== null) {
+            this._views.push(view);
+          }
+
           return true;
         }, this),
 
