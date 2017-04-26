@@ -189,6 +189,17 @@ define([
       this._settings = null;
       this._views = [];
 
+      this.log = function() {
+        var widget_message = 'widget[' + this.get_settings().widget_code + ']: ';
+        var args = _.toArray(arguments);
+        if (typeof args[0] === 'string') {
+          args[0] = widget_message + args[0];
+        } else {
+          args.unshift(widget_message);
+        }
+        console.log.apply(console, args);
+      };
+
       this.callbacks = {
         /**
          * @description Work with settings. Let's create view for settings modal.
@@ -199,6 +210,7 @@ define([
            * @this SampleWidgetController
            */
           function ($modal_body) {
+            this.log('callbacks.settings start');
             //noinspection JSValidateTypes
             this._settings = new Settings({
               render_object: this._render,
@@ -208,6 +220,7 @@ define([
             });
 
             this._views.push(this._settings);
+            this.log('callbacks.settings finish');
           },
           this
         ),
@@ -219,16 +232,19 @@ define([
          * Use it only when widget is already installed
          */
         onSave: _.bind(function (params) {
+          this.log('callbacks.onSave start');
           var result = false;
           if (this._settings !== null) {
             result = this._settings.canSave(params.active === 'Y', params.fields);
           }
 
+          this.log('callbacks.onSave finish');
           return result;
         }, this),
 
 
         render: _.bind(function () {
+          this.log('callbacks.render start');
           var template, params, area;
           area = this.system().area;
 
@@ -245,10 +261,12 @@ define([
               break;
           }
 
+          this.log('callbacks.render finish');
           return true;
         }, this),
 
         init: _.bind(function () {
+          this.log('callbacks.init start');
           var area = this.system().area;
           var element_type;
           var view = null;
@@ -274,23 +292,27 @@ define([
             this._views.push(view);
           }
 
+          this.log('callbacks.init finish');
           return true;
         }, this),
 
 
-        bind_actions: function () {
-          console.log('bind_actions', arguments);
+        bind_actions: _.bind(function () {
+          this.log('callbacks.bind_actions start');
+          this.log('callbacks.bind_actions finish');
           return true;
-        },
+        }, this),
 
         dpSettings: _.bind(function () {
-          console.log('dpSettings', arguments);
+          this.log('callbacks.dpSettings start');
+          this.log('callbacks.dpSettings finish');
         }, this),
 
         destroy: _.bind(function () {
+          this.log('callbacks.destroy start');
           var view;
           while (this._views.length) {
-            view = this._views.splice();
+            view = this._views.splice(0, 1);
             if (view && _.isFunction(view.remove)) {
               view.remove();
             }
@@ -299,17 +321,20 @@ define([
               this._settings = null;
             }
           }
+          this.log('callbacks.destroy finish');
         }, this),
 
         contacts: {
           selected: _.bind(function () {
-            console.log('selected', arguments);
+            this.log('callbacks.contacts.selected start');
+            this.log('callbacks.contacts.selected finish');
           }, this)
         },
 
         leads: {
           selected: _.bind(function () {
-            console.log('selected', arguments);
+            this.log('callbacks.leads.selected start');
+            this.log('callbacks.leads.selected finish');
           }, this)
         }
       };
