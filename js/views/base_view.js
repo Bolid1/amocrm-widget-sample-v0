@@ -43,7 +43,7 @@ define(['backbone'],
           this._render_object = params.render_object;
           this._i18n = params.i18n;
           this._$save_btn = this.$el.find('.js-widget-save');
-        }
+        },
 
         /**
          * @description Remove this view by taking the element
@@ -53,6 +53,16 @@ define(['backbone'],
          * @methodOf SampleWidgetBaseView
          * @instance
          */
+
+        /**
+         * @param file
+         */
+        appendStyles: function (file) {
+          $('<link/>', {
+            href: this._render_object.get('styles_path') + '/' + file + '.css',
+            rel: 'stylesheet'
+          }).appendTo(this.$el);
+        }
       }
     );
   }

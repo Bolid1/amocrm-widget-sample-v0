@@ -46,7 +46,7 @@ define(['underscore', './base_view.js'],
           this._requester = params.requester;
           this._$save_btn = this.$el.find('.js-widget-save');
           this.renderConfirm();
-          this.appendStyles();
+          this.appendStyles('base');
         },
 
         /**
@@ -233,11 +233,8 @@ define(['underscore', './base_view.js'],
           return this._$confirm && this._$confirm.get(0).checked === true;
         },
 
-        appendStyles: function () {
-          $('<link/>', {
-            href: this._render_object.get('styles_path') + '/settings/base.css',
-            rel: 'stylesheet'
-          }).appendTo(this.$el);
+        appendStyles: function (file) {
+          return BaseView.prototype.appendStyles.call(this, 'settings/' + file);
         }
       }
     );
