@@ -149,7 +149,7 @@ define(['underscore', './base_view.js'],
         },
 
         /**
-         * @param {Twig.Template} template
+         * @param {Template} template
          * @param {Object} params
          * @param {String} params.widget_code
          * @param {Number} params.current_date
@@ -172,7 +172,7 @@ define(['underscore', './base_view.js'],
         },
 
         /**
-         * @param {Twig.Template} template
+         * @param {Template} template
          * @param {Object} params
          * @param {String} params.widget_code
          * @param {Number} params.current_date
@@ -214,15 +214,10 @@ define(['underscore', './base_view.js'],
         },
 
         /**
-         * @param {Twig.Template} template
-         * @param {Object} params
-         * @param {String} params.widget_code
-         * @param {Number} params.current_date
-         * @param {String} params.widget_version
-         * @param {String} params.base_path
+         * @param {Template} template
          * @private
          */
-        _renderConfirm: function (template, params) {
+        _renderConfirm: function (template) {
           var html = template.render({
             class_name: 'js-agreement send_auth_agreement',
             input_class_name: 'js-agreement-input',
