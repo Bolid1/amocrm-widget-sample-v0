@@ -13,17 +13,17 @@ define(['underscore', './card_visible.js'],
        */
       {
         /**
-         * @member {jQuery}
+         * @member {JQuery}
          */
         _$submit: null,
 
         /**
-         * @member {jQuery}
+         * @member {JQuery}
          */
         _$input: null,
 
         /**
-         * @member {jQuery}
+         * @member {JQuery}
          */
         _$select: null,
 
@@ -38,7 +38,7 @@ define(['underscore', './card_visible.js'],
 
         /**
          * @param {Object} params
-         * @param {jQuery} params.el
+         * @param {JQuery} params.el
          * @param {RenderClass} params.render_object
          * @param {I18nClass} params.i18n
          * @param {String} params.element_type

@@ -14,12 +14,12 @@ define(['underscore', './base_view.js'],
        */
       {
         /**
-         * @member {jQuery}
+         * @member {JQuery}
          */
         _$save_btn: null,
 
         /**
-         * @member {jQuery}
+         * @member {JQuery}
          */
         _$confirm: null,
 
@@ -35,7 +35,7 @@ define(['underscore', './base_view.js'],
 
         /**
          * @param {Object} params
-         * @param {jQuery} params.el
+         * @param {JQuery} params.el
          * @param {RenderClass} params.render_object
          * @param {RequesterClass} params.requester
          * @param {I18nClass} params.i18n
@@ -43,10 +43,16 @@ define(['underscore', './base_view.js'],
          */
         initialize: function (params) {
           BaseView.prototype.initialize.apply(this, arguments);
+          this._ns += ':settings';
           this._requester = params.requester;
           this._$save_btn = this.$el.find('.js-widget-save');
           this.renderConfirm();
           this.appendStyles('base');
+          this._$document.on('widget:' + this._wc + ':installed' + this._ns, function () {
+            this.remove();
+            //noinspection JSUnresolvedVariable,JSUnresolvedFunction,AmdModulesDependencies
+            AMOCRM.widgets.clear_cache();
+          }.bind(this));
         },
 
         /**

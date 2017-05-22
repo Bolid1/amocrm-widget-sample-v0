@@ -5,7 +5,8 @@ define([
     './js/helpers/render.js',
     './js/helpers/requester.js',
     './js/helpers/i18n.js',
-    './js/factories/card_views.js'
+    './js/factories/card_views.js',
+    './js/helpers/container.js'
   ],
   /**
    * @param {Object} manifest
@@ -25,6 +26,7 @@ define([
    * @param {RequesterClass} RequesterClass
    * @param {I18nClass} I18nClass
    * @param {FactoryForCardViews} CardViewsFactory
+   * @param {Container} Container
    * @return {Function}
    */
   function (manifest,
@@ -33,7 +35,8 @@ define([
             RenderClass,
             RequesterClass,
             I18nClass,
-            CardViewsFactory) {
+            CardViewsFactory,
+            Container) {
     /**
      * @typedef {Object} WidgetSystemObject
      * @property {String} area
@@ -171,33 +174,52 @@ define([
      * @extends Widget
      */
     return function () {
+      Container.set('widget', function () {
+        return this;
+      }.bind(this));
+
+      Container.set('render', function (c) {
+        //noinspection JSValidateTypes
+        return new RenderClass(c.getWidget());
+      });
+
+      Container.set('requester', function (c) {
+        //noinspection JSValidateTypes
+        return new RequesterClass(c.getWidget());
+      });
+
+      Container.set('i18n', function (c) {
+        //noinspection JSValidateTypes
+        return new I18nClass(c.getWidget());
+      });
+
+      Container.factory('settings', function (c, params) {
+        const $modal_body = params[0];
+        //noinspection JSValidateTypes
+        return new Settings({
+          render_object: c.get('render'),
+          requester: c.get('requester'),
+          i18n: c.get('i18n'),
+          el: $modal_body,
+          ns: c.getWidget().ns,
+          wc: c.getWidget().code
+        });
+      });
+
       /**
        * @type {String}
        */
       this.version = manifest.widget.version;
-      //noinspection JSValidateTypes
+
       /**
-       * @type {RenderClass}
-       * @private
+       * @type {String}
        */
-      this._render = new RenderClass(this);
-      //noinspection JSValidateTypes
-      /**
-       * @type {RequesterClass}
-       * @private
-       */
-      this._requester = new RequesterClass(this);
-      //noinspection JSValidateTypes
-      /**
-       * @type {I18nClass}
-       * @private
-       */
-      this._i18n = new I18nClass(this);
+      this.code = manifest.widget.code;
 
       this._settings = null;
       this._views = [];
 
-      this.log = function() {
+      this.log = function () {
         var widget_message = 'widget[' + this.get_settings().widget_code + ']: ';
         var args = _.toArray(arguments);
         if (typeof args[0] === 'string') {
@@ -214,18 +236,13 @@ define([
          */
         settings: _.bind(
           /**
-           * @param {jQuery} $modal_body
+           * @param {JQuery} $modal_body
            * @this SampleWidgetController
            */
           function ($modal_body) {
             this.log('callbacks.settings start');
             //noinspection JSValidateTypes
-            this._settings = new Settings({
-              render_object: this._render,
-              requester: this._requester,
-              i18n: this._i18n,
-              el: $modal_body
-            });
+            this._settings = Container.get('settings', $modal_body);
 
             this._views.push(this._settings);
             this.log('callbacks.settings finish');
@@ -290,8 +307,8 @@ define([
               view = CardViewsFactory(element_type, {
                 el: $('.js-widget-' + this.get_settings().widget_code + '-body'),
                 element_type: element_type,
-                render_object: this._render,
-                i18n: this._i18n
+                render_object: Container.get('render'),
+                i18n: Container.get('i18n')
               });
               break;
           }

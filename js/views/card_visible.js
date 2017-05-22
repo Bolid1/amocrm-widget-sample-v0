@@ -19,7 +19,7 @@ define(['underscore', './base_view.js'],
 
         /**
          * @param {Object} params
-         * @param {jQuery} params.el
+         * @param {JQuery} params.el
          * @param {RenderClass} params.render_object
          * @param {I18nClass} params.i18n
          * @param {String} params.element_type (leads or
