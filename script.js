@@ -215,6 +215,17 @@ define([
         });
       });
 
+      Container.factory('modal', function (c, params) {
+        var Modal = this.getWidget().helpers.Modal;
+        params = _.extend({
+          class_name: c.getWidget().code + '-modal',
+          init: _.noop,
+          destroy: _.noop
+        }, params);
+
+        return new Modal(params);
+      });
+
       /**
        * @type {String}
        */
