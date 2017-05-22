@@ -144,8 +144,8 @@ define(['underscore', './card_visible.js', './../helpers/container.js'],
 
         _modal_template: _.template(
           '<div>' +
-          'Selected option: <%= selected %><br\>' +
-          'Input data: <%- input %><br\>' +
+          '<%= i18n.get("card.leads.modal.selected") %>: <%= selected %><br\>' +
+          '<%= i18n.get("card.leads.modal.input") %>: <%- input %><br\>' +
           '</div>'
         ),
 
@@ -160,6 +160,7 @@ define(['underscore', './card_visible.js', './../helpers/container.js'],
           var input = '' + this._$input.val();
 
           var data = {
+            i18n: this._i18n,
             selected: selected,
             input: input
           };
