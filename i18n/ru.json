@@ -9,7 +9,11 @@
       "example_input": {
         "placeholder": "Пример input-а"
       },
-      "submit": "Отправить"
+      "submit": "Отправить",
+      "modal": {
+        "selected": "Selected option",
+        "input": "Input data"
+      }
     }
   },
   "settings": {
