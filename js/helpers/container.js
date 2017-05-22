@@ -24,11 +24,16 @@
     }
 
     if (isFactory) {
-      return new objects[key](Container, _(arguments).slice(1));
+      return factory(objects[key], _(arguments).slice(1));
     }
 
     return objects[key];
   };
+
+  function factory(obj, args) {
+    args.unshift(Container);
+    return obj.apply(Container, args);
+  }
 
   /**
    * @methodOf Container
@@ -47,6 +52,10 @@
    * @return void
    */
   Container.factory = function (key, value) {
+    if (typeof value !== 'function') {
+      throw new Error('Value for "%s" is not a function'.replace('%s', key))
+    }
+
     this.set(key, value);
     factories.push(key);
   };
@@ -55,6 +64,12 @@
   _.extend(Container, {
     getWidget: function () {
       return Container.get('widget');
+    },
+    getSettings: function ($modal_body) {
+      return Container.get('settings', $modal_body);
+    },
+    getCardView: function (element_type) {
+      return Container.get('card_view', element_type);
     }
   });
 

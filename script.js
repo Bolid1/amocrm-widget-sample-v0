@@ -193,8 +193,7 @@ define([
         return new I18nClass(c.getWidget());
       });
 
-      Container.factory('settings', function (c, params) {
-        const $modal_body = params[0];
+      Container.factory('settings', function (c, $modal_body) {
         //noinspection JSValidateTypes
         return new Settings({
           render_object: c.get('render'),
@@ -203,6 +202,16 @@ define([
           el: $modal_body,
           ns: c.getWidget().ns,
           wc: c.getWidget().code
+        });
+      });
+
+      Container.factory('card_view', function (c, element_type) {
+        //noinspection JSValidateTypes
+        return CardViewsFactory(element_type, {
+          el: $('.js-widget-' + c.getWidget().code + '-body'),
+          element_type: element_type,
+          render_object: c.get('render'),
+          i18n: c.get('i18n')
         });
       });
 
@@ -242,7 +251,7 @@ define([
           function ($modal_body) {
             this.log('callbacks.settings start');
             //noinspection JSValidateTypes
-            this._settings = Container.get('settings', $modal_body);
+            this._settings = Container.getSettings($modal_body);
 
             this._views.push(this._settings);
             this.log('callbacks.settings finish');
@@ -304,12 +313,7 @@ define([
             case 'lcard':
             case 'comcard':
               element_type = area === 'lcard' ? 'leads' : 'companies';
-              view = CardViewsFactory(element_type, {
-                el: $('.js-widget-' + this.get_settings().widget_code + '-body'),
-                element_type: element_type,
-                render_object: Container.get('render'),
-                i18n: Container.get('i18n')
-              });
+              view = Container.getCardView(element_type);
               break;
           }
 
