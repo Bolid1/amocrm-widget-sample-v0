@@ -92,6 +92,14 @@ define([
      * @class Widget
      */
     /**
+     * @member {String} ns - jQueryEvents namespace 4 widget
+     * @memberOf Widget
+     */
+    /**
+     * @member {String} init_once - param from manifest
+     * @memberOf Widget
+     */
+    /**
      * @member {function} crm_post - Post query to external server
      * @memberOf Widget
      * @param {String} host
