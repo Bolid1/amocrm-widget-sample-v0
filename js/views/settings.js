@@ -67,11 +67,6 @@ define(['underscore', './base_view.js'],
         canSave: function (is_active, fields) {
           var data, hash, params, first_install;
 
-          if (!this._isConfirmed()) {
-            this.stopSave().showNeedConfirm();
-            return false;
-          }
-
           // Compose data to check & save
           data = {
             login: fields.field_text,
@@ -97,6 +92,11 @@ define(['underscore', './base_view.js'],
             return true;
           }
 
+          if (!this._isConfirmed()) {
+            this.stopSave().showNeedConfirm();
+            return false;
+          }
+
           if (!_.has(fields, 'field_custom')) {
             fields.field_custom = {};
           }
@@ -118,6 +118,15 @@ define(['underscore', './base_view.js'],
          */
         _isFirstInstall: function () {
           return this.$el.find('input[name="widget_active"]').length === 0;
+        },
+
+        /**
+         * @return {boolean}
+         * @private
+         * @description Check if widget was NOT installed in prev time
+         */
+        _isActive: function () {
+          return !this._isFirstInstall() && this.$el.find('input[name="widget_active"]').get(0).checked === true;
         },
 
         /**
@@ -221,7 +230,7 @@ define(['underscore', './base_view.js'],
           var html = template.render({
             class_name: 'js-agreement send_auth_agreement',
             input_class_name: 'js-agreement-input',
-            checked: false,
+            checked: this._isActive(),
             text_class_name: 'agreement_text',
             text: this._i18n.get('settings.agreement')
           });
