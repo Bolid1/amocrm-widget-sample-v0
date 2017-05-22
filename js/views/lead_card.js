@@ -1,10 +1,11 @@
-define(['underscore', './card_visible.js'],
+define(['underscore', './card_visible.js', './../helpers/container.js'],
   /**
    * @param {_} _
    * @param {SampleWidgetCardVisible} BaseView
+   * @param {Container} Container
    * @return {SampleWidgetCardVisibleLeads}
    */
-  function (_, BaseView) {
+  function (_, BaseView, Container) {
     return BaseView.extend(
       /**
        * @class SampleWidgetCardVisibleLeads
@@ -27,12 +28,18 @@ define(['underscore', './card_visible.js'],
          */
         _$select: null,
 
+        /**
+         * @member {Modal}
+         */
+        _modal: null,
+
         events: function () {
           return {
             'change .js-example_input': 'checkCanSubmit',
             'input .js-example_input': 'checkCanSubmit',
             'keyup .js-example_input': 'checkCanSubmit',
-            'change .js-example_select': 'checkCanSubmit'
+            'change .js-example_select': 'checkCanSubmit',
+            'click .js-submit.active': 'submit'
           };
         },
 
@@ -119,17 +126,68 @@ define(['underscore', './card_visible.js'],
           this._$select = this.$el.find('input[name="example_select"]');
         },
 
-        checkCanSubmit: function () {
+        canSubmit: function () {
           var selected = this._$select.val();
           selected = !isNaN(selected) ? parseInt(selected) : 0;
 
           var input = '' + this._$input.val();
 
-          var can_submit = input.length > 0 && selected > 0;
+          return input.length > 0 && selected > 0;
+        },
+
+        checkCanSubmit: function () {
+          var can_submit = this.canSubmit();
 
           this._$submit.toggleClass('button-input-disabled', !can_submit);
-          this._$submit.toggleClass('button-input_blue', can_submit);
+          this._$submit.toggleClass('button-input_blue active', can_submit);
+        },
+
+        _modal_template: _.template(
+          '<div>' +
+          'Selected option: <%= selected %><br\>' +
+          'Input data: <%- input %><br\>' +
+          '</div>'
+        ),
+
+        submit: function () {
+          if (!this.canSubmit()) {
+            return false;
+          }
+
+          var selected = this._$select.val();
+          selected = !isNaN(selected) ? parseInt(selected) : 0;
+
+          var input = '' + this._$input.val();
+
+          var data = {
+            selected: selected,
+            input: input
+          };
+
+          var params = {
+            init: function ($modal_body) {
+              const html = this._modal_template(data);
+              $modal_body
+                .html(html)
+                .trigger('modal:loaded')
+                .trigger("modal:centrify");
+            }.bind(this)
+          };
+
+          this._modal = Container.get('modal', params);
+        },
+
+        remove: function () {
+          var originResult = BaseView.prototype.remove.apply(this, arguments);
+
+          if (this._modal && _.isFunction(this._modal.destroy)) {
+            this._modal.destroy();
+            this._modal = null;
+          }
+
+          return originResult;
         }
       }
     );
-  });
+  }
+);
