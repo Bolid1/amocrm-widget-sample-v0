@@ -101,7 +101,7 @@ define(['underscore', 'jquery'], function (_, $) {
         }
 
         var auto_params = {
-          url: endpoint === 'proxy' ? params.url : this.buildUrl(endpoint, params.data)
+          url: endpoint === 'proxy' ? params.url : params.url || this.buildUrl(endpoint, params.data)
         };
 
         if (params.method === 'GET') {
