@@ -1,6 +1,6 @@
 define(['underscore', './base_view.js'],
   /**
-   * @param {_} _
+   * @param {UnderscoreStatic} _
    * @param {SampleWidgetBaseView} BaseView
    * @return {SampleWidgetSettings}
    */

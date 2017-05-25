@@ -1,6 +1,6 @@
 define(['underscore', './card_visible.js', './../helpers/container.js'],
   /**
-   * @param {_} _
+   * @param {UnderscoreStatic} _
    * @param {SampleWidgetCardVisible} BaseView
    * @param {Container} Container
    * @return {SampleWidgetCardVisibleLeads}

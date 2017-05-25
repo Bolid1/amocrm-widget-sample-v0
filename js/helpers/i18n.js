@@ -1,6 +1,6 @@
 define(['underscore'],
   /**
-   * @param {_} _
+   * @param {UnderscoreStatic} _
    * @return {I18nClass}
    */
   function (_) {
