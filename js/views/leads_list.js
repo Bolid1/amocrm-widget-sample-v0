@@ -83,7 +83,7 @@ define(['underscore', './base_view.js', './../helpers/container.js', 'es6promise
             return reject('Empty ids');
           }
 
-          this.loadLinks(this._ids).then(function (links) {
+          this.loadLinks(this._ids).then(_.bind(function (links) {
             if (!Array.isArray(links) || !links.length) {
               return reject('Linked contacts not found');
             }
@@ -92,14 +92,14 @@ define(['underscore', './base_view.js', './../helpers/container.js', 'es6promise
             Promise.all([
               this.loadLeads(_.unique(_.collect(links, 'lead'))),
               this.loadContacts(_.collect(links, 'contact'))
-            ]).then(function (data) {
+            ]).then(_.bind(function (data) {
               resolve({links: links, leads: data[0], contacts: data[1]});
-            }.bind(this), reject)
-          }.bind(this), reject);
+            }, this), reject)
+          }, this), reject);
         },
 
         loadLinks: function (leads_ids) {
-          return new Promise(function (resolve, reject) {
+          return new Promise(_.bind(function (resolve, reject) {
             const params = {
               url: '/private/api/v2/json/links/list',
               data: {
@@ -128,12 +128,12 @@ define(['underscore', './base_view.js', './../helpers/container.js', 'es6promise
               }));
             };
 
-            const error = function () {
+            const error = _.bind(function () {
               reject(this._i18n.get('errors.xhr.load_links'))
-            }.bind(this);
+            }, this);
 
             this.makeRequest('links', params, success, error);
-          }.bind(this));
+          }, this));
         },
 
         loadLeads: function (leads_ids) {
@@ -145,7 +145,7 @@ define(['underscore', './base_view.js', './../helpers/container.js', 'es6promise
         },
 
         loadElements: function (type, ids) {
-          return new Promise(function (resolve, reject) {
+          return new Promise(_.bind(function (resolve, reject) {
             const params = {
               url: '/private/api/v2/json/' + type + '/list',
               data: {
@@ -163,19 +163,19 @@ define(['underscore', './base_view.js', './../helpers/container.js', 'es6promise
               resolve(data);
             };
 
-            const error = function () {
+            const error = _.bind(function () {
               reject(this._i18n.get('errors.xhr.load_' + type))
-            }.bind(this);
+            }, this);
 
             this.makeRequest('type', params, success, error);
-          }.bind(this));
+          }, this));
         },
 
         makeRequest: function (name, params, success, error) {
-          const deleteXHR = function (func) {
+          const deleteXHR = _.bind(function (func) {
             delete this._xhr[name];
             func.apply(this, _(arguments).slice(1));
-          }.bind(this);
+          }, this);
 
           this._xhr[name] = this._requester.get(params, 'direct');
 

@@ -48,11 +48,11 @@ define(['underscore', './base_view.js'],
           this._$save_btn = this.$el.find('.js-widget-save');
           this.renderConfirm();
           this.appendStyles('base');
-          this._$document.on('widget:' + this._wc + ':installed' + this._ns, function () {
+          this._$document.on('widget:' + this._wc + ':installed' + this._ns, _.bind(function () {
             this.remove();
             //noinspection JSUnresolvedVariable,JSUnresolvedFunction,AmdModulesDependencies
             AMOCRM.widgets.clear_cache();
-          }.bind(this));
+          }, this));
         },
 
         /**

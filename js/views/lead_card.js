@@ -166,13 +166,13 @@ define(['underscore', './card_visible.js', './../helpers/container.js'],
           };
 
           var params = {
-            init: function ($modal_body) {
+            init: _.bind(function ($modal_body) {
               const html = this._modal_template(data);
               $modal_body
                 .html(html)
                 .trigger('modal:loaded')
                 .trigger("modal:centrify");
-            }.bind(this)
+            }, this)
           };
 
           this._modal = Container.get('modal', params);
