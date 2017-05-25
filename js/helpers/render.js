@@ -1,6 +1,6 @@
 define(['underscore'],
   /**
-   * @param {_} _
+   * @param {UnderscoreStatic} _
    * @return {Render}
    */
   function (_) {
@@ -63,6 +63,14 @@ define(['underscore'],
           })
         },
 
+        renderPromise: function (template_name, params) {
+          return new Promise(_.bind(function (resolve) {
+            this.render(template_name, function (template, params) {
+              resolve({template: template, params: params});
+            }, params);
+          }, this));
+        },
+
         _getTemplate: function (template_name, params, callback) {
           (typeof params === 'object') || (params = {});
           template_name = template_name || '';
@@ -78,10 +86,10 @@ define(['underscore'],
           }
 
           this._widget.render({
-            href: '/templates/' + template_name + '.twig',
-            base_path: this.get('base_path'),
-            v: +new Date,
-            load: onLoadTemplate
+              href: '/templates/' + template_name + '.twig',
+              base_path: this.get('base_path'),
+              v: +new Date,
+              load: onLoadTemplate
           }, params);
         },
 
