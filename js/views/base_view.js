@@ -87,11 +87,9 @@ define(['backbone', 'jquery', './../helpers/container.js'],
         },
 
         remove: function () {
-          var originResult = Backbone.View.prototype.remove.apply(this, arguments);
-
           this._$document.off(this._ns);
 
-          return originResult;
+          return Backbone.View.prototype.remove.apply(this, arguments);
         }
       }
     );
