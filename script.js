@@ -2,6 +2,7 @@ define([
     'json!./manifest.json',
     'underscore',
     './js/views/settings.js',
+    './js/views/leads_list.js',
     './js/helpers/render.js',
     './js/helpers/requester.js',
     './js/helpers/i18n.js',
@@ -20,8 +21,9 @@ define([
    * @param {Array.<String>} manifest.widget.locale
    * @param {Boolean} manifest.widget.installation
    * @param {Number} manifest.widget.interface_version
-   * @param {_} _
+   * @param {UnderscoreStatic} _
    * @param {SampleWidgetSettings} Settings
+   * @param {SampleWidgetLeadsListView} LeadsList
    * @param {RenderClass} RenderClass
    * @param {RequesterClass} RequesterClass
    * @param {I18nClass} I18nClass
@@ -32,6 +34,7 @@ define([
   function (manifest,
             _,
             Settings,
+            LeadsList,
             RenderClass,
             RequesterClass,
             I18nClass,
@@ -174,9 +177,9 @@ define([
      * @extends Widget
      */
     return function () {
-      Container.set('widget', function () {
+      Container.set('widget', _.bind(function () {
         return this;
-      }.bind(this));
+      }, this));
 
       Container.set('render', function (c) {
         //noinspection JSValidateTypes
@@ -211,19 +214,32 @@ define([
           el: $('.js-widget-' + c.getWidget().code + '-body'),
           element_type: element_type,
           render_object: c.get('render'),
-          i18n: c.get('i18n')
+          i18n: c.get('i18n'),
+          ns: c.getWidget().ns,
+          wc: c.getWidget().code
         });
       });
 
       Container.factory('modal', function (c, params) {
         var Modal = this.getWidget().helpers.Modal;
         params = _.extend({
-          class_name: c.getWidget().code + '-modal',
+          class_name: c.getWidget().code + '-modal sample_widget',
           init: _.noop,
           destroy: _.noop
         }, params);
 
         return new Modal(params);
+      });
+
+      Container.factory('leads_list', function (c, ids) {
+        return new LeadsList({
+          render_object: c.get('render'),
+          requester: c.get('requester'),
+          i18n: c.get('i18n'),
+          ids: ids,
+          ns: c.getWidget().ns,
+          wc: c.getWidget().code
+        });
       });
 
       /**
@@ -352,7 +368,7 @@ define([
           this.log('callbacks.destroy start');
           var view;
           while (this._views.length) {
-            view = this._views.splice(0, 1);
+            view = this._views.shift();
             if (view && _.isFunction(view.remove)) {
               view.remove();
             }
@@ -374,6 +390,11 @@ define([
         leads: {
           selected: _.bind(function () {
             this.log('callbacks.leads.selected start');
+            // Disable overlay in list
+            this.widgetsOverlay(false);
+            //noinspection JSValidateTypes
+            var view = Container.getLeadsList(_(this.list_selected().selected).collect('id'));
+            this._views.push(view);
             this.log('callbacks.leads.selected finish');
           }, this)
         }

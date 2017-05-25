@@ -1,0 +1,23 @@
+{% for lead in items %}
+  <div class="lead">
+    <h2>
+      <a href="/leads/detail/{{ lead.id }}" class="js-navigate-link">{{ lead.name|escape }}</a>
+    </h2>
+    <div class="contacts">
+      {% for contact in lead.contacts %}
+        <div class="contact">
+          <h3>
+            <a href="/contacts/detail/{{ contact.id }}" class="js-navigate-link">{{ contact.name|escape }}</a>
+          </h3>
+          <div class="phones">
+            {% for phone in contact.phones %}
+              <div class="phone">
+                <a href="tel:{{ phone|escape }}">{{ phone|escape }}</a>
+              </div>
+            {% endfor %}
+          </div>
+        </div>
+      {% endfor %}
+    </div>
+  </div>
+{% endfor %}

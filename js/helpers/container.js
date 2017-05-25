@@ -70,6 +70,9 @@
     },
     getCardView: function (element_type) {
       return Container.get('card_view', element_type);
+    },
+    getLeadsList: function (ids) {
+      return Container.get('leads_list', ids);
     }
   });
 
