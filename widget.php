@@ -1,4 +1,5 @@
 <?php
+
 namespace Amo_sample_v0;
 
 class Widget extends \Helpers\Widgets {

@@ -86,10 +86,10 @@ define(['underscore'],
           }
 
           this._widget.render({
-              href: '/templates/' + template_name + '.twig',
-              base_path: this.get('base_path'),
-              v: +new Date,
-              load: onLoadTemplate
+            href: '/templates/' + template_name + '.twig',
+            base_path: this.get('base_path'),
+            v: +new Date,
+            load: onLoadTemplate
           }, params);
         },
 
