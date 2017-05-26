@@ -110,6 +110,7 @@ define(['underscore'],
         initCallBack: function (template, callback) {
           if (callback && _.isFunction(callback)) {
             callback(template, {
+              render: _.bind(this._widget.render, this._widget),
               widget_code: this.get('widget_code'),
               current_date: (+new Date),
               widget_version: this.get('widget_version'),

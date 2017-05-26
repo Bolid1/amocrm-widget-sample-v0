@@ -69,57 +69,33 @@ define(['underscore', './card_visible.js', './../helpers/container.js'],
 
         _render: function (template, params) {
           var self = this;
-          var fields = [
-            {
-              template: 'input',
-              params: {
-                name: 'example_input',
-                class_name: 'js-example_input',
-                placeholder: self._i18n.get('card.leads.example_input.placeholder')
-              }
+
+          params = _.extend(params, {
+            example_input: {
+              name: 'example_input',
+              class_name: 'js-example_input',
+              placeholder: self._i18n.get('card.leads.example_input.placeholder')
             },
-            {
-              template: 'select',
-              params: {
-                name: 'example_select',
-                class_name: 'js-example_select',
-                items: [
-                  {id: 0, option: '...'},
-                  {id: 1, option: 'First'},
-                  {id: 2, option: 'Second'},
-                  {id: 3, option: 'Third'},
-                  {id: 4, option: 'Fourth'}
-                ],
-                selected: 3
-              }
+            example_select: {
+              name: 'example_select',
+              class_name: 'js-example_select',
+              items: [
+                {id: 0, option: '...'},
+                {id: 1, option: 'First'},
+                {id: 2, option: 'Second'},
+                {id: 3, option: 'Third'},
+                {id: 4, option: 'Fourth'}
+              ],
+              selected: 3
             },
-            {
-              template: 'button',
-              params: {
-                name: 'example_button',
-                text: self._i18n.get('card.leads.submit'),
-                class_name: 'js-submit button-input-disabled'
-              }
+            example_button: {
+              name: 'example_button',
+              text: self._i18n.get('card.leads.submit'),
+              class_name: 'js-submit button-input-disabled'
             }
-          ];
+          });
 
           this.$el.html($(template.render(params)));
-
-          _.each(fields, function (field) {
-            if (!(field && field.params && field.params.name)) {
-              return;
-            }
-
-            this._render_object.renderCoreControl(field.template, function (template) {
-              var $replace = self.$el.find('.js-' + field.params.name);
-
-              if (!$replace.length) {
-                return;
-              }
-
-              $replace.replaceWith($(template.render(field.params)));
-            });
-          }, this);
 
           this._$submit = this.$el.find('.js-submit');
           this._$input = this.$el.find('input[name="example_input"]');
