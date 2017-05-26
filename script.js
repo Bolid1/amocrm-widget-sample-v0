@@ -188,16 +188,7 @@ define([
       this._settings = null;
       this._views = [];
 
-      this.log = function () {
-        var widget_message = 'widget[' + this.get_settings().widget_code + ']:';
-        var args = _(arguments).toArray();
-        if (typeof args[0] === 'string') {
-          args[0] = widget_message + ' ' + args[0];
-        } else {
-          args.unshift(widget_message);
-        }
-        window.console.log.apply(null, args);
-      };
+      this._logger = Container.get('logger');
 
       this.callbacks = {
         /**
@@ -209,12 +200,12 @@ define([
            * @this SampleWidgetController
            */
           function ($modal_body) {
-            this.log('callbacks.settings start');
+            this._logger.debug('callbacks.settings start');
             //noinspection JSValidateTypes
             this._settings = Container.getSettings($modal_body);
 
             this._views.push(this._settings);
-            this.log('callbacks.settings finish');
+            this._logger.debug('callbacks.settings finish');
           },
           this
         ),
@@ -226,19 +217,19 @@ define([
          * Use it only when widget is already installed
          */
         onSave: _.bind(function (params) {
-          this.log('callbacks.onSave start');
+          this._logger.debug('callbacks.onSave start');
           var result = false;
           if (this._settings !== null) {
             result = this._settings.canSave(params.active === 'Y', params.fields);
           }
 
-          this.log('callbacks.onSave finish');
+          this._logger.debug('callbacks.onSave finish');
           return result;
         }, this),
 
 
         render: _.bind(function () {
-          this.log('callbacks.render start');
+          this._logger.debug('callbacks.render start');
           var template, params, area;
           area = this.system().area;
 
@@ -255,12 +246,12 @@ define([
               break;
           }
 
-          this.log('callbacks.render finish');
+          this._logger.debug('callbacks.render finish');
           return true;
         }, this),
 
         init: _.bind(function () {
-          this.log('callbacks.init start');
+          this._logger.debug('callbacks.init start');
           var area = this.system().area;
           var element_type;
           var view = null;
@@ -281,24 +272,24 @@ define([
             this._views.push(view);
           }
 
-          this.log('callbacks.init finish');
+          this._logger.debug('callbacks.init finish');
           return true;
         }, this),
 
 
         bind_actions: _.bind(function () {
-          this.log('callbacks.bind_actions start');
-          this.log('callbacks.bind_actions finish');
+          this._logger.debug('callbacks.bind_actions start');
+          this._logger.debug('callbacks.bind_actions finish');
           return true;
         }, this),
 
         dpSettings: _.bind(function () {
-          this.log('callbacks.dpSettings start');
-          this.log('callbacks.dpSettings finish');
+          this._logger.debug('callbacks.dpSettings start');
+          this._logger.debug('callbacks.dpSettings finish');
         }, this),
 
         destroy: _.bind(function () {
-          this.log('callbacks.destroy start');
+          this._logger.debug('callbacks.destroy start');
           var view;
           while (this._views.length) {
             view = this._views.shift();
@@ -310,25 +301,25 @@ define([
               this._settings = null;
             }
           }
-          this.log('callbacks.destroy finish');
+          this._logger.debug('callbacks.destroy finish');
         }, this),
 
         contacts: {
           selected: _.bind(function () {
-            this.log('callbacks.contacts.selected start');
-            this.log('callbacks.contacts.selected finish');
+            this._logger.debug('callbacks.contacts.selected start');
+            this._logger.debug('callbacks.contacts.selected finish');
           }, this)
         },
 
         leads: {
           selected: _.bind(function () {
-            this.log('callbacks.leads.selected start');
+            this._logger.debug('callbacks.leads.selected start');
             // Disable overlay in list
             this.widgetsOverlay(false);
             //noinspection JSValidateTypes
             var view = Container.getLeadsList(_(this.list_selected().selected).collect('id'));
             this._views.push(view);
-            this.log('callbacks.leads.selected finish');
+            this._logger.debug('callbacks.leads.selected finish');
           }, this)
         }
       };

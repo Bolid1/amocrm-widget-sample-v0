@@ -4,6 +4,7 @@ define([
     './helpers/render.js',
     './helpers/requester.js',
     './helpers/i18n.js',
+    './helpers/logger.js',
 
     './factories/card_views.js',
 
@@ -15,12 +16,13 @@ define([
    * @param Render
    * @param Requester
    * @param I18n
+   * @param Logger
    * @param FactoryCardView
    * @param SettingsView
    * @param LeadsListView
    * @return {Function}
    */
-  function (Container, Render, Requester, I18n, FactoryCardView, SettingsView, LeadsListView) {
+  function (Container, Render, Requester, I18n, Logger, FactoryCardView, SettingsView, LeadsListView) {
     return function (WidgetObject) {
       Container.set('widget', function () {
         return WidgetObject;
@@ -37,6 +39,10 @@ define([
 
       Container.set('i18n', function (c) {
         return new I18n(c.getWidget());
+      });
+
+      Container.set('logger', function (c) {
+        return new Logger(c.getWidget());
       });
 
       // Views
