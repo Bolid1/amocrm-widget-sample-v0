@@ -184,8 +184,8 @@ define(['underscore', './base_view.js', './../helpers/container.js', 'es6promise
           this._xhr[name].error(_.wrap(error, deleteXHR));
         },
 
-        onError: function () {
-          console.error(arguments);
+        onError: function (error) {
+          this._modal.showError(error);
         },
 
         /**
