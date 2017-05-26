@@ -3,11 +3,9 @@ define([
     'underscore',
     './js/views/settings.js',
     './js/views/leads_list.js',
-    './js/helpers/render.js',
-    './js/helpers/requester.js',
-    './js/helpers/i18n.js',
-    './js/factories/card_views.js',
-    './js/helpers/container.js'
+    './js/helpers/container.js',
+
+    './js/bootstrap.js'
   ],
   /**
    * @param {Object} manifest
@@ -24,22 +22,16 @@ define([
    * @param {UnderscoreStatic} _
    * @param {SampleWidgetSettings} Settings
    * @param {SampleWidgetLeadsListView} LeadsList
-   * @param {RenderClass} RenderClass
-   * @param {RequesterClass} RequesterClass
-   * @param {I18nClass} I18nClass
-   * @param {FactoryForCardViews} CardViewsFactory
-   * @param {Container} Container
+   * @param {Object} Container
+   * @param {function} bootstrap
    * @return {Function}
    */
   function (manifest,
             _,
             Settings,
             LeadsList,
-            RenderClass,
-            RequesterClass,
-            I18nClass,
-            CardViewsFactory,
-            Container) {
+            Container,
+            bootstrap) {
     /**
      * @typedef {Object} WidgetSystemObject
      * @property {String} area
@@ -177,70 +169,7 @@ define([
      * @extends Widget
      */
     return function () {
-      Container.set('widget', _.bind(function () {
-        return this;
-      }, this));
-
-      Container.set('render', function (c) {
-        //noinspection JSValidateTypes
-        return new RenderClass(c.getWidget());
-      });
-
-      Container.set('requester', function (c) {
-        //noinspection JSValidateTypes
-        return new RequesterClass(c.getWidget());
-      });
-
-      Container.set('i18n', function (c) {
-        //noinspection JSValidateTypes
-        return new I18nClass(c.getWidget());
-      });
-
-      Container.factory('settings', function (c, $modal_body) {
-        //noinspection JSValidateTypes
-        return new Settings({
-          render_object: c.get('render'),
-          requester: c.get('requester'),
-          i18n: c.get('i18n'),
-          el: $modal_body,
-          ns: c.getWidget().ns,
-          wc: c.getWidget().code
-        });
-      });
-
-      Container.factory('card_view', function (c, element_type) {
-        //noinspection JSValidateTypes
-        return CardViewsFactory(element_type, {
-          el: $('.js-widget-' + c.getWidget().code + '-body'),
-          element_type: element_type,
-          render_object: c.get('render'),
-          i18n: c.get('i18n'),
-          ns: c.getWidget().ns,
-          wc: c.getWidget().code
-        });
-      });
-
-      Container.factory('modal', function (c, params) {
-        var Modal = this.getWidget().helpers.Modal;
-        params = _.extend({
-          class_name: c.getWidget().code + '-modal sample_widget',
-          init: _.noop,
-          destroy: _.noop
-        }, params);
-
-        return new Modal(params);
-      });
-
-      Container.factory('leads_list', function (c, ids) {
-        return new LeadsList({
-          render_object: c.get('render'),
-          requester: c.get('requester'),
-          i18n: c.get('i18n'),
-          ids: ids,
-          ns: c.getWidget().ns,
-          wc: c.getWidget().code
-        });
-      });
+      bootstrap(this);
 
       /**
        * @type {String}
@@ -256,14 +185,14 @@ define([
       this._views = [];
 
       this.log = function () {
-        var widget_message = 'widget[' + this.get_settings().widget_code + ']: ';
-        var args = _.toArray(arguments);
+        var widget_message = 'widget[' + this.get_settings().widget_code + ']:';
+        var args = _(arguments).toArray();
         if (typeof args[0] === 'string') {
-          args[0] = widget_message + args[0];
+          args[0] = widget_message + ' ' + args[0];
         } else {
           args.unshift(widget_message);
         }
-        console.log.apply(console, args);
+        window.console.log.apply(null, args);
       };
 
       this.callbacks = {
@@ -399,6 +328,7 @@ define([
           }, this)
         }
       };
+
       return this;
     };
   }
