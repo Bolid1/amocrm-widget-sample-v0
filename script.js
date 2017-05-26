@@ -8,14 +8,7 @@ define([
     './js/bootstrap.js'
   ],
   /**
-   * @param {Object} manifest
-   * @param {Object} manifest.widget
-   * @param {String} manifest.widget.name
-   * @param {String} manifest.widget.description
-   * @param {String} manifest.widget.short_description
-   * @param {String} manifest.widget.code
-   * @param {String} manifest.widget.secret_key
-   * @param {String} manifest.widget.version
+   * @param {Manifest} manifest
    * @param {Array.<String>} manifest.widget.locale
    * @param {Boolean} manifest.widget.installation
    * @param {Number} manifest.widget.interface_version
@@ -32,6 +25,17 @@ define([
             LeadsList,
             Container,
             bootstrap) {
+    /**
+     * @typedef {Object} Manifest
+     * @property {Object} widget
+     * @property {String} widget.name
+     * @property {String} widget.description
+     * @property {String} widget.short_description
+     * @property {String} widget.code
+     * @property {String} widget.secret_key
+     * @property {String} widget.version
+     */
+
     /**
      * @typedef {Object} WidgetSystemObject
      * @property {String} area
